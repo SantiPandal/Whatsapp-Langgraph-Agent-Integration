@@ -1,95 +1,57 @@
 import os
+from typing import Annotated
 
+from config.config import setup_model
 from config.logging import logger
 from dotenv import load_dotenv
 from langgraph.checkpoint.memory import MemorySaver
-from langgraph.checkpoint.postgres import PostgresSaver
-from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
-from langgraph.graph import END, START, StateGraph
-from langgraph.types import Command
-from psycopg.rows import dict_row
-from psycopg_pool import AsyncConnectionPool, ConnectionPool
-from src.callbacks import langfuse_handler
+from langgraph.graph import StateGraph
+from langgraph.graph.message import AnyMessage, add_messages
+from langgraph.prebuilt import create_react_agent
+from src.wppconnect.api import send_message
+from typing_extensions import TypedDict
+from utils.graph_utils import generate_thread_id, process_chunks
+
+# Initialize dotenv to load environment variables
+load_dotenv()
 
 
-def main_test():
+class State(TypedDict):
+    messages: Annotated[list[AnyMessage], add_messages]
+
+
+llm_config = {"provider": "openai", "model": "gpt-4o-mini", "temperature": 0.6}
+
+
+llm_model = setup_model(llm_config)
+
+
+def main(message, phone_number):
     try:
         checkpointer = MemorySaver()
-        graph = builder.compile(checkpointer=checkpointer)
 
-        phone_number = "31984551214"
-        messages = [
-            "oi",
-            "Filial Vargem Grande",
-            "Cupom Fiscal",
-            "Entrega",
-            "Tabela Entrega",
-            "Boleto",
-            "07 Dias",
-            "Entrega | AVENIDA MP 17 VITOR EDSON MARQUES LADO NO, 12 - ALPA - BARRETOS/SP | RAIO: 50",
-            "Segunda-feira, 17 de fevereiro de 2025",
-            "16:00 - 23:00",
-            "tudo bem e vc?",
-            "quero comprar coca cola",
-            "quero ver coca cola zero",
-        ]
-        # messages = ["oi", "Sim", "Quinta feira", "Na verdade acho que sexta fica melhor"]
+        graph = create_react_agent(
+            llm_model, checkpointer=checkpointer, state_schema=State
+        )
+
         thread_id = generate_thread_id(phone_number)
 
         config = {
-            "callbacks": [langfuse_handler],
             "configurable": {},
         }
 
         config["configurable"]["thread_id"] = thread_id
         config["configurable"]["phone_number"] = phone_number
 
-        for message in messages:
+        logger.info(f"Thread ID: {thread_id}")
 
-            logger.info(f"Thread ID: {thread_id}")
+        input_data = {"messages": [{"role": "user", "content": message}]}
 
-            snapshot = graph.get_state(config)
-
-            if not snapshot.values:
-                logger.info("No snapshot found, creating new one")
-
-                input_data = {
-                    "messages": [{"role": "user", "content": message}],
-                    "temp_message": "",
-                    "cliente_hist_data": {},
-                    "last_products_search": [],
-                    "last_products_info": [],
-                    "temp_data": [],
-                    "order_products": [],
-                    "recommendation_products": [],
-                    "step": "",
-                    "next_step": "",
-                }
-
-            else:
-                input_data = {"messages": [{"role": "user", "content": message}]}
-
-            if snapshot.next == ("human_review_node",) or snapshot.next == (
-                "customer_input",
-            ):
-                for chunk in graph.stream(
-                    Command(resume=input_data), config, stream_mode="updates"
-                ):
-                    print(chunk)
-                    process_chunks(chunk, phone_number)
-
-            else:
-                for chunk in graph.stream(
-                    input=input_data, config=config, stream_mode="updates"
-                ):
-                    print(chunk)
-                    process_chunks(chunk, phone_number)
+        for chunk in graph.stream(
+            input=input_data, config=config, stream_mode="updates"
+        ):
+            print(chunk)
+            process_chunks(chunk, phone_number)
     except:
-        custom_message = """Infelizmente, ocorreu um erro interno em nosso sistema. 😕 Pedimos que tente novamente mais tarde.
-
-Se o problema persistir, entre em contato com o nosso SAC para obter suporte:
-
-📲 Fale com nosso atendimento: https://megag.com.br/sac/
-
-Agradecemos sua paciência e estamos à disposição para ajudá-lo! 😊✨"""
+        custom_message = """Infelizmente, ocorreu um erro interno em nosso sistema. 😕 Pedimos que tente novamente mais tarde."""
         send_message(custom_message, phone_number)
