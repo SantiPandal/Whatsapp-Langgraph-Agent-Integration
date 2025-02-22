@@ -91,7 +91,7 @@ async def process_aggregated_messages(
             del processing_tasks[sender_id]
 
         # Process the combined message
-        phone_number = "31984551214"  # MUDAR AQUI PARA MOCK
+        phone_number = sender_id.split("@")[0]
 
         logger.info(
             f"Processing aggregated messages for {sender_id}: {combined_message}"

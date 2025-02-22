@@ -12,7 +12,6 @@ def load_environment():
 
     # Required environment variables
     required_vars = {
-        "GOOGLE_API_KEY": os.getenv("GOOGLE_API_KEY"),
         "OPENAI_API_KEY": os.getenv("OPENAI_API_KEY"),
     }
 
@@ -29,11 +28,7 @@ def setup_model(llm_config):
     # Load environment variables
     env = load_environment()
 
-    if llm_config["provider"] == "google":
-        return ChatGoogleGenerativeAI(
-            model=llm_config["model"], temperature=llm_config["temperature"]
-        )
-    elif llm_config["provider"] == "openai":
+    if llm_config["provider"] == "openai":
         return ChatOpenAI(
             model=llm_config["model"], temperature=llm_config["temperature"]
         )
