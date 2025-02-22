@@ -78,7 +78,7 @@ def send_voice(audio_path: str, phone_number: str) -> Dict:
         raise ValueError(f"Error reading audio file: {e}")
 
     with WhatsAppConnection() as conn:
-        url = f"{conn.base_url}/api/{conn.session}/send-voice-base-64"
+        url = f"{conn.base_url}/api/{conn.session}/send-voice-base64"
 
         headers = {
             "Content-Type": "application/json; charset=utf-8",
@@ -89,7 +89,7 @@ def send_voice(audio_path: str, phone_number: str) -> Dict:
         data = {
             "phone": phone_number,
             "isGroup": False,
-            "base64": f"data:audio/mpeg;base64,{base64_audio}",
+            "base64Ptt": f"data:audio/mpeg;base64,{base64_audio}",
         }
 
         try:

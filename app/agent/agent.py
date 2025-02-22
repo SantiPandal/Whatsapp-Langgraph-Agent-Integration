@@ -87,7 +87,7 @@ async def main(phone_number, message):
         ) as pool, pool.connection() as conn:
             checkpointer = AsyncPostgresSaver(conn)
 
-            #await checkpointer.setup() # FIRST EXECUTION ONLY
+            # await checkpointer.setup() # FIRST EXECUTION ONLY
 
             graph = builder.compile(checkpointer=checkpointer)
 
@@ -112,3 +112,9 @@ async def main(phone_number, message):
     except:
         custom_message = """Infelizmente, ocorreu um erro interno em nosso sistema. 😕 Pedimos que tente novamente mais tarde."""
         send_message(custom_message, phone_number)
+
+
+# if __name__ == "__main__":
+#     import asyncio
+
+#     asyncio.run(main("553184551214", "olá bom dia"))

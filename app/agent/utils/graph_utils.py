@@ -1,13 +1,13 @@
 import uuid
 
 from IPython.display import Image
-from langchain_core.messages import AIMessage, ToolMessage
-from langchain_core.runnables import RunnableLambda
+from langchain_core.messages import AIMessage
 from langchain_core.runnables.graph import CurveStyle, MermaidDrawMethod, NodeStyles
 from langgraph.graph import StateGraph
-from langgraph.prebuilt import ToolNode
 from rich.console import Console
-from src.wppconnect.api import send_message
+from src.wppconnect.api import  send_voice
+from gtts import gTTS
+import tempfile
 
 rich = Console()
 
@@ -78,4 +78,13 @@ def process_chunks(chunk, phone_number):
                             f"\nAgent:\n{agent_answer}",
                             style="black on white",
                         )
-                        send_message(agent_answer, phone_number)
+
+
+                        tts = gTTS(text=agent_answer, lang='pt-br')
+
+
+                        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as temp_audio:
+                            audio_path = temp_audio.name
+                            tts.save(audio_path)
+
+                        send_voice(audio_path, phone_number)
