@@ -237,9 +237,3 @@ async def health_check():
     """Simple health check endpoint"""
     logger.info("Health check requested")
     return {"status": "healthy"}
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    asyncio.run(main("553184551214", "olá bom dia"))

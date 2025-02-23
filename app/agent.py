@@ -14,7 +14,7 @@ from typing_extensions import TypedDict
 from app.config.config import setup_model
 from app.config.logging import logger
 from app.src.wppconnect.api import send_message
-from app.utils.graph_utils import generate_thread_id, process_chunks
+from app.utils.graph_utils import generate_thread_id, process_chunks, print_graph
 from system_prompt import prompt
 
 # Initialize dotenv to load environment variables
@@ -74,6 +74,15 @@ builder.add_edge(START, "assistant")
 builder.add_edge("assistant", END)
 
 
+## TO PRINT THE GRAPH
+# from langgraph.checkpoint.memory import MemorySaver
+
+# checkpoint = MemorySaver()
+# graph = builder.compile(checkpointer=checkpoint)
+
+# print_graph(graph)
+
+
 async def main(phone_number, message):
     try:
         async with AsyncConnectionPool(
@@ -90,6 +99,7 @@ async def main(phone_number, message):
             # await checkpointer.setup() # FIRST EXECUTION ONLY
 
             graph = builder.compile(checkpointer=checkpointer)
+
 
             thread_id = generate_thread_id(phone_number)
 
@@ -111,9 +121,3 @@ async def main(phone_number, message):
     except:
         custom_message = """Unfortunately, an internal error has occurred in our system. 😕 Please try again later."""
         send_message(custom_message, phone_number)
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    asyncio.run(main("553184551214", "olá bom dia"))
