@@ -15,6 +15,7 @@ from app.config.config import setup_model
 from app.config.logging import logger
 from app.src.wppconnect.api import send_message
 from app.utils.graph_utils import generate_thread_id, process_chunks
+from system_prompt import prompt
 
 # Initialize dotenv to load environment variables
 load_dotenv()
@@ -45,12 +46,7 @@ class Assistant:
 
 primary_assistant_prompt = ChatPromptTemplate.from_messages(
     [
-        (
-            "system",
-            "Você é a Dra. Sofia, uma terapeuta compassiva e empática."
-            "Seu objetivo é fornecer orientação de apoio, sem julgamentos, e ajudar os usuários "
-            "a explorar suas emoções e pensamentos.",
-        ),
+        ("system", prompt),
         ("placeholder", "{messages}"),
     ]
 )
@@ -60,6 +56,7 @@ llm_config = {
     "model": "llama-3.3-70b-specdec",
     "temperature": 0.6,
 }
+
 llm_model = setup_model(llm_config)
 
 
