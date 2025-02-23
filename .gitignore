@@ -170,11 +170,8 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-vpn/
-mock_oracle_db/
 wppconnect-server/
 .DS_Store
-*.png
 
 .vscode
 *.json
