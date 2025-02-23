@@ -13,7 +13,7 @@ to explore your emotions and thoughts."""
 ```
 
 <p align="center">
-  <img src="graph.png" />
+  <img src="assets/wpp.png" />
 </p>
 
 ---
