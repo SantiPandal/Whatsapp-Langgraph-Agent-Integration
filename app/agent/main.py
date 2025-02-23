@@ -1,7 +1,6 @@
 import asyncio
 import base64
 import os
-import re
 import tempfile
 from collections import defaultdict
 from contextlib import asynccontextmanager
@@ -9,20 +8,23 @@ from datetime import datetime
 from typing import Any, Dict
 
 from agent import main
+from config.config import setup_groq_client
 from config.logging import setup_logger
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
-from openai import OpenAI
 from pydantic import BaseModel
 
+load_dotenv()
+
+WAIT_TIME = os.getenv("WAIT_TIME", 1)
+LANG = os.getenv("LANG", "en")
+
+GROQ_CLIENT = setup_groq_client()
+
 logger = setup_logger()
-client = OpenAI()
 
-# Message buffer to store messages per user
 message_buffers = defaultdict(list)
-# Store tasks for message processing
 processing_tasks = {}
-
-WAIT_TIME = 1
 
 
 class Sender(BaseModel):
@@ -57,8 +59,8 @@ async def transcribe_base64_audio(base64_audio: str) -> str:
 
         # Transcribe the audio
         with open(tmp_file_path, "rb") as audio_file:
-            transcription = client.audio.transcriptions.create(
-                model="whisper-1", file=audio_file
+            transcription = GROQ_CLIENT.audio.transcriptions.create(
+                model="whisper-large-v3", file=audio_file, language=LANG
             )
         return transcription.text
     finally:
@@ -72,7 +74,7 @@ async def process_aggregated_messages(
 ):
     """Process messages after waiting period"""
     try:
-        # Wait for 20 seconds to aggregate messages
+        # Wait for X seconds to aggregate messages
         await asyncio.sleep(WAIT_TIME)
 
         # Get all messages for this sender

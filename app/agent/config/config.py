@@ -1,9 +1,8 @@
 import os
 
-import openai
+import groq
 from dotenv import load_dotenv
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_openai import ChatOpenAI
+from langchain_groq import ChatGroq
 
 
 def load_environment():
@@ -12,7 +11,7 @@ def load_environment():
 
     # Required environment variables
     required_vars = {
-        "OPENAI_API_KEY": os.getenv("OPENAI_API_KEY"),
+        "GROQ_API_KEY": os.getenv("GROQ_API_KEY"),
     }
 
     # Check for missing variables
@@ -26,14 +25,14 @@ def load_environment():
 def setup_model(llm_config):
     """Initialize all required services."""
     # Load environment variables
-    env = load_environment()
+    _ = load_environment()
 
-    if llm_config["provider"] == "openai":
-        return ChatOpenAI(
+    if llm_config["provider"] == "groq":
+        return ChatGroq(
             model=llm_config["model"], temperature=llm_config["temperature"]
         )
 
 
-def setup_openai():
+def setup_groq_client():
     env = load_environment()
-    return openai.OpenAI(api_key=env["OPENAI_API_KEY"])
+    return groq.Groq(api_key=env["GROQ_API_KEY"])

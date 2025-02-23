@@ -4,6 +4,8 @@ from typing import Annotated
 from config.config import setup_model
 from config.logging import logger
 from dotenv import load_dotenv
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables import Runnable
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.message import AnyMessage, add_messages
@@ -19,13 +21,6 @@ load_dotenv()
 
 class State(TypedDict):
     messages: Annotated[list[AnyMessage], add_messages]
-
-
-llm_config = {"provider": "openai", "model": "gpt-4o-mini", "temperature": 0.6}
-llm_model = setup_model(llm_config)
-
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import Runnable
 
 
 class Assistant:
@@ -58,6 +53,13 @@ primary_assistant_prompt = ChatPromptTemplate.from_messages(
         ("placeholder", "{messages}"),
     ]
 )
+
+llm_config = {
+    "provider": "openai",
+    "model": "llama-3.3-70b-specdec",
+    "temperature": 0.6,
+}
+llm_model = setup_model(llm_config)
 
 
 assistant_runnable = primary_assistant_prompt | llm_model
@@ -107,14 +109,13 @@ async def main(phone_number, message):
             async for chunk in graph.astream(
                 input=input_data, config=config, stream_mode="updates"
             ):
-                print(chunk)
                 process_chunks(chunk, phone_number)
     except:
-        custom_message = """Infelizmente, ocorreu um erro interno em nosso sistema. 😕 Pedimos que tente novamente mais tarde."""
+        custom_message = """Unfortunately, an internal error has occurred in our system. 😕 Please try again later."""
         send_message(custom_message, phone_number)
 
 
 # if __name__ == "__main__":
 #     import asyncio
 
-#     asyncio.run(main("553184551214", "olá bom dia"))
+#     asyncio.run(main("5531...", "olá bom dia"))
