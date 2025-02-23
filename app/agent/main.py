@@ -75,7 +75,7 @@ async def process_aggregated_messages(
     """Process messages after waiting period"""
     try:
         # Wait for X seconds to aggregate messages
-        await asyncio.sleep(WAIT_TIME)
+        await asyncio.sleep(int(WAIT_TIME))
 
         # Get all messages for this sender
         messages = message_buffers[sender_id]
