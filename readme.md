@@ -3,6 +3,7 @@
 This project implements a **WhatsApp AI Agent** that engages in natural conversations through WhatsApp, providing support and responses in both text and voice formats. Using **LangGraph**, **FastAPI**, **PostgreSQL**, and the **Groq** LLM, this agent can understand text messages, transcribe voice notes, and respond in a synthesized speech.
 
 👉 The agent acts as a therapist named Dr. Sofia, providing compassionate and empathetic guidance to users!
+
 💡 You can modify the agent's personality by editing the `system_prompt.py` file:
 
 ```python
