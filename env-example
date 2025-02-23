@@ -18,4 +18,4 @@ PSQL_CONNECTION_STRING=postgresql://${PSQL_USERNAME}:${PSQL_PASSWORD}@${PSQL_HOS
 
 # Whatsapp Configuration
 WAIT_TIME=time_to_wait_before_inference
-LANG=transcription_langugage
+LANGUAGE=transcription_langugage for example en (english) or pt (for brazilian portuguese)
