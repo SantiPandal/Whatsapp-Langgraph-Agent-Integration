@@ -57,7 +57,7 @@ OPENAI_API_KEY=sua_chave_openai
 2. Execute o bot:
 ```bash
 cd app/agent
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload  
+uvicorn app/agent/main:app --host 0.0.0.0 --port 8000 --reload  
 ```
 
 ## Observações

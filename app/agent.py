@@ -1,8 +1,6 @@
 import os
 from typing import Annotated
 
-from config.config import setup_model
-from config.logging import logger
 from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import Runnable
@@ -11,9 +9,12 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.graph.message import AnyMessage, add_messages
 from psycopg.rows import dict_row
 from psycopg_pool import AsyncConnectionPool
-from src.wppconnect.api import send_message
 from typing_extensions import TypedDict
-from utils.graph_utils import generate_thread_id, process_chunks
+
+from app.config.config import setup_model
+from app.config.logging import logger
+from app.src.wppconnect.api import send_message
+from app.utils.graph_utils import generate_thread_id, process_chunks
 
 # Initialize dotenv to load environment variables
 load_dotenv()
@@ -115,7 +116,7 @@ async def main(phone_number, message):
         send_message(custom_message, phone_number)
 
 
-# if __name__ == "__main__":
-#     import asyncio
+if __name__ == "__main__":
+    import asyncio
 
-#     asyncio.run(main("5531...", "olá bom dia"))
+    asyncio.run(main("553184551214", "olá bom dia"))

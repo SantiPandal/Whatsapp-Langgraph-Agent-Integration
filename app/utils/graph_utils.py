@@ -9,7 +9,8 @@ from langchain_core.messages import AIMessage
 from langchain_core.runnables.graph import CurveStyle, MermaidDrawMethod, NodeStyles
 from langgraph.graph import StateGraph
 from rich.console import Console
-from src.wppconnect.api import send_voice
+
+from app.src.wppconnect.api import send_voice
 
 rich = Console()
 
@@ -76,6 +77,7 @@ def process_chunks(chunk, phone_number):
                         style="black on white",
                     )
 
+                    print("LAAAANG: ", LANG)
                     tts = gTTS(text=agent_answer, lang=LANG)
 
                     with tempfile.NamedTemporaryFile(

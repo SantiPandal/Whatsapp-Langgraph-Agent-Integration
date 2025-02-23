@@ -7,12 +7,13 @@ from contextlib import asynccontextmanager
 from datetime import datetime
 from typing import Any, Dict
 
-from agent import main
-from config.config import setup_groq_client
-from config.logging import setup_logger
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+
+from app.agent import main
+from app.config.config import setup_groq_client
+from app.config.logging import setup_logger
 
 load_dotenv()
 
@@ -236,3 +237,9 @@ async def health_check():
     """Simple health check endpoint"""
     logger.info("Health check requested")
     return {"status": "healthy"}
+
+
+if __name__ == "__main__":
+    import asyncio
+
+    asyncio.run(main("553184551214", "olá bom dia"))
