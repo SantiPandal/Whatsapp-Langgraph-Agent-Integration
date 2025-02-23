@@ -16,8 +16,7 @@ rich = Console()
 
 load_dotenv()
 
-LANG = os.getenv("LANG", "en")
-
+GTTS_LANG = os.getenv("LANGUAGE", "en")
 
 def print_graph(graph: StateGraph, image_name: str = "graph.png") -> None:
     """
@@ -47,7 +46,7 @@ def generate_thread_id(user_id: str) -> str:
 
 def process_chunks(chunk, phone_number):
     """
-    Processes a chunk from the agent and displays information about tool calls or the agent's answer.
+    Processes a chunk from the agent and displays information about agent's answer.
 
     Parameters:
         chunk (dict): A dictionary containing information about the agent's messages.
@@ -56,9 +55,7 @@ def process_chunks(chunk, phone_number):
         None
 
     This function processes a chunk of data to check for agent messages.
-    It iterates over the messages and checks for tool calls.
-    If a tool call is found, it extracts the tool name and query, then prints a formatted message using the Rich library.
-    If no tool call is found, it extracts and prints the agent's answer using the Rich library.
+    It extracts and prints the agent's answer using the Rich library.
     """
     if isinstance(chunk, dict):
         if "messages" in chunk[list(chunk.keys())[0]]:
@@ -77,8 +74,7 @@ def process_chunks(chunk, phone_number):
                         style="black on white",
                     )
 
-                    print("LAAAANG: ", LANG)
-                    tts = gTTS(text=agent_answer, lang=LANG)
+                    tts = gTTS(text=agent_answer, lang=GTTS_LANG)
 
                     with tempfile.NamedTemporaryFile(
                         delete=False, suffix=".mp3"

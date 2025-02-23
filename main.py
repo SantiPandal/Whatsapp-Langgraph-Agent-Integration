@@ -18,7 +18,7 @@ from app.config.logging import setup_logger
 load_dotenv()
 
 WAIT_TIME = os.getenv("WAIT_TIME", 1)
-LANG = os.getenv("LANG", "en")
+LANG = os.getenv("LANGUAGE")
 
 GROQ_CLIENT = setup_groq_client()
 
