@@ -12,15 +12,12 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 from app.agent import main
-from app.config.config import setup_groq_client
 from app.config.logging import setup_logger
 
 load_dotenv()
 
 WAIT_TIME = os.getenv("WAIT_TIME", 1)
 LANG = os.getenv("LANGUAGE")
-
-GROQ_CLIENT = setup_groq_client()
 
 logger = setup_logger()
 
